@@ -447,6 +447,17 @@
         .principles article{padding-left:0;padding-right:22px;border-right:none;border-bottom:1px solid rgba(237,232,210,.14);padding-bottom:22px}
         .gallery{grid-template-columns:repeat(3,1fr)}
       }
+      @media (max-width:900px){
+        /* Mobile hero: a full-viewport hero left a big empty band of sky
+           above the headline on portrait phones. Shorten the hero, move the
+           photograph's focal point down to the fields and grazing cattle,
+           and lift the content block off the bottom edge so the space above
+           and below it feels balanced. Desktop hero is unchanged. */
+        .hero{min-height:84svh}
+        .hero .bg img{object-position:center 78%}
+        .hero .inner{padding-top:108px;padding-bottom:clamp(30px,7svh,58px)}
+        .hero .strip{margin-top:clamp(30px,5vw,44px)}
+      }
       @media (max-width:920px){
         .intro-grid,.split,.about-grid,.contact-grid{grid-template-columns:1fr}
         .split.flip .split-media{order:0}
