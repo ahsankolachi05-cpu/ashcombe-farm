@@ -448,15 +448,46 @@
         .gallery{grid-template-columns:repeat(3,1fr)}
       }
       @media (max-width:900px){
-        /* Mobile hero: a full-viewport hero left a big empty band of sky
-           above the headline on portrait phones. Shorten the hero, move the
-           photograph's focal point down to the fields and grazing cattle,
-           and lift the content block off the bottom edge so the space above
-           and below it feels balanced. Desktop hero is unchanged. */
-        .hero{min-height:84svh}
-        .hero .bg img{object-position:center 78%}
-        .hero .inner{padding-top:108px;padding-bottom:clamp(30px,7svh,58px)}
-        .hero .strip{margin-top:clamp(30px,5vw,44px)}
+        /* Mobile hero — why the previous attempt changed nothing, and what
+           actually fixes it:
+           1) The photograph is 2400x1600 (3:2 landscape). In a tall portrait
+              hero, object-fit:cover scales it until its HEIGHT matches the
+              hero exactly and crops the sides — there is never any vertical
+              overflow, so object-position's vertical value (62% -> 78%) had
+              no slack to redistribute and was a no-op: the photo's top ~52%
+              (sky) always filled the top ~52% of the hero.
+           2) min-height:84svh could not shrink the hero either: min-height
+              is a floor, and the hero's own content (108px top padding, the
+              two-row strip, up to 58px bottom padding) was already taller
+              than 84svh, so the content set the height and the hero stayed
+              ~full-screen with the content pinned to the bottom edge.
+           The fix changes the geometry instead of nudging values: the img
+           element is made twice as tall as the hero and anchored to the
+           hero's bottom edge (the overflow is clipped by .hero's
+           overflow:hidden), so the slice of photograph actually visible is
+           its lower half, starting at the horizon line — patchwork fields
+           and grazing cattle fill the frame, with at most a sliver of sky
+           at the very top. The content is also genuinely compacted (the
+           first geometry-only attempt still measured ~120svh in a capture
+           with fallback fonts: a two-line eyebrow pill, stacked full-width
+           buttons and three-line strip cells) — tighter headline, buttons
+           that share one row, and slimmer strip cells bring the content
+           under the min-height, so the 76svh floor binds and the hero ends
+           visibly above the fold. Desktop hero is unchanged. */
+        .hero{min-height:76svh}
+        .hero .bg img{
+          position:absolute;left:0;bottom:0;
+          width:100%;height:200%;
+          object-fit:cover;object-position:center;
+        }
+        .hero .scrim{background:linear-gradient(180deg,rgba(18,30,19,.5) 0%,rgba(18,30,19,.2) 30%,rgba(18,30,19,.38) 62%,rgba(16,28,17,.84) 100%)}
+        .hero .inner{padding-top:88px;padding-bottom:0}
+        .hero .eyebrow{margin-bottom:14px;font-size:11.5px;letter-spacing:.18em;padding:7px 14px}
+        .hero .support{margin-top:12px}
+        .hero .ctas{margin-top:20px}
+        .hero .strip{margin-top:20px}
+        .hero .strip div{padding:12px 16px 14px}
+        .hero .strip span{line-height:1.5}
       }
       @media (max-width:920px){
         .intro-grid,.split,.about-grid,.contact-grid{grid-template-columns:1fr}
@@ -494,8 +525,17 @@
         .principles{grid-template-columns:1fr}
         .frow{grid-template-columns:1fr}
         .seasons{grid-template-columns:repeat(2,1fr)}
-        .hero .strip div{flex:1 1 140px;padding:14px 14px 18px}
-        .hero .ctas .btn{flex:1;justify-content:center}
+        /* Compact phone hero content (see the ≤900px hero note): smaller
+           headline and support text, both buttons sharing one row instead
+           of stacking full-width, and slim strip cells — together these
+           keep the whole content block shorter than the 76svh hero. */
+        .hero h1{font-size:31px;line-height:1.12}
+        .hero .support{font-size:15.5px;line-height:1.6}
+        .hero .ctas{flex-wrap:nowrap}
+        .hero .strip div{flex:1 1 140px;padding:10px 12px 12px}
+        .hero .strip b{font-size:15px}
+        .hero .strip span{font-size:12px}
+        .hero .ctas .btn{flex:1;justify-content:center;min-width:0;padding:12px 12px;font-size:14px;white-space:normal;text-align:center;line-height:1.3}
         .intro-media .small-img{display:none}
         .intro-media .main-img img{height:320px}
         /* Footer phones (360–430px): ONE horizontal row of four blocks, as
